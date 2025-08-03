@@ -1,9 +1,17 @@
 
+import { db } from '../db';
+import { pollsTable } from '../db/schema';
 import { type Poll } from '../schema';
 
 export const getPolls = async (): Promise<Poll[]> => {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all polls from the database.
-  // This returns basic poll information without options for performance.
-  return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(pollsTable)
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch polls:', error);
+    throw error;
+  }
 };

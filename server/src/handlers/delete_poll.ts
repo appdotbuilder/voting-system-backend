@@ -1,10 +1,21 @@
 
+import { db } from '../db';
+import { pollsTable } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { type GetPollInput } from '../schema';
 
 export const deletePoll = async (input: GetPollInput): Promise<boolean> => {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is deleting a poll and all associated data (options, votes).
-  // Only the poll creator should be able to delete the poll.
-  // Returns true if successfully deleted, false if poll not found or unauthorized.
-  return Promise.resolve(false);
+  try {
+    // Delete the poll - CASCADE will handle options and votes automatically
+    const result = await db.delete(pollsTable)
+      .where(eq(pollsTable.id, input.id))
+      .returning()
+      .execute();
+
+    // Return true if a poll was deleted, false if none found
+    return result.length > 0;
+  } catch (error) {
+    console.error('Poll deletion failed:', error);
+    throw error;
+  }
 };
